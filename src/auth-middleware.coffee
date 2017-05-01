@@ -57,7 +57,7 @@ module.exports = (robot) ->
 
   robot.listenerMiddleware (context, next, done) ->
     opts    = context.listener.options
-    reqUser = context.response.message.user
+    reqUser = robot.brain.userForName(context.response.message.user.name)
     reqRoom = context.response.message.room
     reqMsg  = context.response.message.text
     action  = successAction
@@ -78,7 +78,7 @@ module.exports = (robot) ->
       if opts.rooms != undefined 
         if reqRoom not in opts.rooms
           action = 'Rejecting (room)'
-          authFail context, "#{action} '#{reqUser.name}: #{reqMsg}' -- use this room: #{opts.room}"
+          authFail context, "#{action} '#{reqUser.name}: #{reqMsg}' -- use this room: #{reqRoom}"
       if opts.roles != undefined
         if robot.auth.hasRole(reqUser, opts.roles) is false
           action = 'Rejecting (role)'
